@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using IKEA.DAL.Common.Enum_s;
+using IKEA.DAL.Models.Department;
 
 namespace IKEA.BLL.Dto_s.Employees
 {
@@ -13,16 +15,19 @@ namespace IKEA.BLL.Dto_s.Employees
         public string Name { get; set; } = null!;
         public int? Age { get; set; }
 
-
+        [DataType(DataType.Currency)]
         public decimal Salary { get; set; }
-
+        [Display(Name ="Is Active")]
         public bool IsActive { get; set; }
+        [DataType(DataType.EmailAddress)]
 
         public string? Email { get; set; }
 
-        public string Gender { get; set; }= null!;
+        public Gender Gender { get; set; }
 
-        public string EmployeeType { get; set; } = null!;
+        public EmployeeType EmployeeType { get; set; } 
+
+        public string? departments { get; set; }
     }
 
 }

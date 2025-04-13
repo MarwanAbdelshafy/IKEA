@@ -8,7 +8,7 @@ using IKEA.DAL.Persistance.Reposatories._Genarics;
 
 namespace IKEA.DAL.Persistance.Reposatories.Departments
 {
-    public interface IDepartmentReposatory:IGenericRepository<Department>
+    public interface IDepartmentReposatory:IGenericRepository<Departmentt>
     {
         //IEnumerable<Department> GetAll(bool WithNoTracking = true);
 

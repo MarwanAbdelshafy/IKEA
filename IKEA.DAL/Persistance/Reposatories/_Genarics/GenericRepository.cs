@@ -19,39 +19,47 @@ namespace IKEA.DAL.Persistance.Reposatories._Genarics
             _dbContext = context;
         }
 
-        public IEnumerable<T> GetAll(bool WithNoTracking = true)
+        public IQueryable<T> GetAll(bool WithNoTracking = true)
         {
             if (WithNoTracking)
-                return _dbContext.Set<T>().Where(D => D.IsDeleted == false).AsNoTracking().ToList();
+                return _dbContext.Set<T>().Where(D => D.IsDeleted == false).AsNoTracking();
 
-            return _dbContext.Set<T>().Where(D => D.IsDeleted == false).ToList();
+            return _dbContext.Set<T>().Where(D => D.IsDeleted == false);
         }
 
-        public T? GetById(int id)
+        public async Task<T?> GetById(int id)
         {
-            var itme = _dbContext.Set<T>().Find(id);
+
+            var itme = await _dbContext.Set<T>().FindAsync(id);
 
             return itme;
-           // return _dbContext.Set<T>().Find(id);
+            //return _dbContext.Set<T>().FirstOrDefault(x => x.Id == id && x.IsDeleted == false);
+
+            //var itme = _dbContext.Set<T>().Find(id);
+            //return itme;
+
+
+            // return _dbContext.Set<T>().Find(id);
         }
 
-        public int Add(T  Item)
+        public void Add(T Item)
         {
             _dbContext.Set<T>().Add(Item);
-            return _dbContext.SaveChanges();
+            //return _dbContext.SaveChanges();
         }
 
-        public int Update(T Item)
+        public void Update(T Item)
         {
             _dbContext.Set<T>().Update(Item);
-            return _dbContext.SaveChanges();
+           // return _dbContext.SaveChanges();
         }
 
-        public int Delete(T Item)
+        public void Delete(T Item)
         {
             Item.IsDeleted = true;
             _dbContext.Set<T>().Update(Item);
-            return _dbContext.SaveChanges();
+           // return _dbContext.SaveChanges();
         }
+
     }
 }

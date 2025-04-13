@@ -18,5 +18,6 @@ namespace IKEA.BLL.Dto_s.Departments
         public string? Description { get; set; }
         [Display(Name="Date Of Creation")]
         public DateOnly CreationDate { get; set; }
+
     }
 }

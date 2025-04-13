@@ -10,7 +10,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace IKEA.DAL.Persistance.Reposatories.Departments
 {
-    public class DepartmentReposatory :GenericRepository<Department>, IDepartmentReposatory
+    public class DepartmentReposatory :GenericRepository<Departmentt>, IDepartmentReposatory
     {
         private readonly ApplcationDBContext _dbContext;
 

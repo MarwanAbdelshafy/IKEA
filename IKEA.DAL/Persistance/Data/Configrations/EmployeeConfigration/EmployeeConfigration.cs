@@ -11,9 +11,9 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace IKEA.DAL.Persistance.Data.Configrations.EmployeeConfigration
 {
-    public class EmployeeConfigration : IEntityTypeConfiguration<Employees>
+    public class EmployeeConfigration : IEntityTypeConfiguration<Employeess>
     {
-        public void Configure(EntityTypeBuilder<Employees> builder)
+        public void Configure(EntityTypeBuilder<Employeess> builder)
         {
             builder.Property(E => E.Name).HasColumnType("varchar(50)").IsRequired();
             builder.Property(E => E.Address).HasColumnType("varchar(100)");
@@ -28,7 +28,7 @@ namespace IKEA.DAL.Persistance.Data.Configrations.EmployeeConfigration
             builder.Property(E => E.EmployeeType).HasConversion
                 (
                 (type)=> type.ToString(),
-                (type) =>(EmployeeType)Enum.Parse(typeof(Employees), type)
+                (type) =>(EmployeeType)Enum.Parse(typeof(EmployeeType), type)
                 );
 
             builder.Property(D => D.CreatedOn).HasDefaultValueSql("GetDate()");

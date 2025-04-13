@@ -9,7 +9,7 @@ using IKEA.DAL.Persistance.Reposatories._Genarics;
 
 namespace IKEA.DAL.Persistance.Reposatories.Employee
 {
-    public interface IEmployeeReposatory:IGenericRepository<Employees>
+    public interface IEmployeeReposatory:IGenericRepository<Employeess>
     {
         //IEnumerable<Employees> GetAll(bool WithNoTracking = true);
 

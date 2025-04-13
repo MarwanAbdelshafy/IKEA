@@ -1,6 +1,11 @@
-﻿using System.CodeDom;
+﻿ using System.CodeDom;
+using System.Threading.Tasks;
+using AutoMapper;
 using IKEA.BLL.Dto_s.Departments;
 using IKEA.BLL.Services.DepartmentServise;
+using IKEA.DAL.Models.Department;
+using IKEA.PL.ViewModels;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.DotNet.Scaffolding.Shared.Messaging;
 using Microsoft.Extensions.Hosting;
@@ -8,15 +13,20 @@ using NuGet.Protocol.Plugins;
 
 namespace IKEA.PL.Controllers
 {
+    [Authorize]
+
     public class DepartmentController : Controller
+
     {
         private readonly IDepartementServices departementServices;
+        private readonly IMapper mapper;
         private readonly ILogger<DepartmentController> logger;
         private readonly IWebHostEnvironment environment;
 
-        public DepartmentController(IDepartementServices _departementService, ILogger<DepartmentController> _logger, IWebHostEnvironment environment)
+        public DepartmentController(IDepartementServices _departementService,IMapper mapper ,ILogger<DepartmentController> _logger, IWebHostEnvironment environment)
         {
             departementServices = _departementService;
+            this.mapper = mapper;
             logger = _logger;
             this.environment = environment;
         }
@@ -25,7 +35,7 @@ namespace IKEA.PL.Controllers
         [HttpGet]
         public IActionResult Index()
         {
-            var Departments = departementServices.GetAllDepartments();
+            var Departments =  departementServices.GetAllDepartments();
             return View(Departments);
         }
         #endregion
@@ -33,12 +43,12 @@ namespace IKEA.PL.Controllers
 
         #region Details
         [HttpGet]
-        public IActionResult Details(int? Id)
+        public async Task<IActionResult> Details(int? Id)
         {
             if (Id is null)
                 return BadRequest();
 
-            var department = departementServices.GetDepartmentById(Id.Value);
+            var department =await departementServices.GetDepartmentById(Id.Value);
             if (department is null)
                 return NotFound();
             return View(department);
@@ -57,47 +67,46 @@ namespace IKEA.PL.Controllers
             return View();
         }
         [HttpPost]
+        [ValidateAntiForgeryToken]
 
-        public IActionResult Create(CreatedDepartmentDto departmentDto)
+        public async Task<IActionResult> Create(DepartmentVM departmentVM)
         {
             if (!ModelState.IsValid)
             {
-                return View(departmentDto);
+                return View(departmentVM);
             }
             var Message = string.Empty;
             try
             {
-                var Result = departementServices.CreateDepartment(departmentDto);
+                var departmentDto= mapper.Map<DepartmentVM,CreatedDepartmentDto>(departmentVM); 
+
+                //var departmentDto = new CreatedDepartmentDto()
+                //    {
+                //      Name = departmentVM.Name,
+                //      Code = departmentVM.Code,
+                //      CreationDate = departmentVM.CreationDate,
+                //      Description = departmentVM.Description,
+                //    };
+                var Result =await departementServices.CreateDepartment(departmentDto);
 
                 if (Result > 0)
                     return RedirectToAction(nameof(Index));
-
                 else
-                {
                     Message = "Department is not Created";
-                    ModelState.AddModelError(string.Empty, Message);
-                    return View(departmentDto);
 
-                }
             }
             catch (Exception ex)
             {
                 logger.LogError(ex, ex.Message);
                 if (environment.IsDevelopment())
-                {
                     Message = ex.Message;
-                    ModelState.AddModelError(string.Empty, Message);
-                    return View(departmentDto);
-                }
                 else
-                {
-                    Message = "An Error Effect at The Creation Operator";
-                    ModelState.AddModelError(string.Empty, Message);
-                    return View(departmentDto);
-                }
+                   Message = "An Error Effect at The Creation Operator";
+
             }
 
-
+            ModelState.AddModelError(string.Empty, Message);
+            return View(departmentVM);
 
         }
 
@@ -106,17 +115,17 @@ namespace IKEA.PL.Controllers
 
         #region Update
         [HttpGet]
-        public IActionResult Edit(int? Id)
+        public async Task<IActionResult> Edit(int? Id)
         {
             if (Id is null)
                 return BadRequest();
 
-            var Department = departementServices.GetDepartmentById(Id.Value);
+            var Department =await departementServices.GetDepartmentById(Id.Value);
 
             if (Department is null)
                 return NotFound();
 
-            var MappedDepartment = new UpdatedDepartmentDto()
+            var MappedDepartment = new DepartmentVM()
             {
                 Id = Department.Id,
                 Name = Department.Name,
@@ -130,15 +139,28 @@ namespace IKEA.PL.Controllers
         }
 
         [HttpPost]
-        public IActionResult Edit(UpdatedDepartmentDto departmentDto)
+        [ValidateAntiForgeryToken]
+
+        public async Task<IActionResult> Edit(DepartmentVM departmentVM)
         {
             if(!ModelState.IsValid)
-                return View(departmentDto) ;
+                return View(departmentVM) ;
             var Message = string.Empty;
             try
             {
-                var Result = departementServices.UpdateDepartment(departmentDto);
 
+                var departmentDto = mapper.Map<DepartmentVM, UpdatedDepartmentDto>(departmentVM);
+
+                //var departmentDto=new UpdatedDepartmentDto()
+                //{
+                //    Id=departmentVM.Id,
+                //    Name = departmentVM.Name,
+                //    Code = departmentVM.Code,
+                //    CreationDate = departmentVM.CreationDate,
+                //    Description = departmentVM.Description,
+                //}; ;
+                var Result =await departementServices.UpdateDepartment(departmentDto);
+                
                 if (Result > 0)
                     return RedirectToAction(nameof(Index));
                 else
@@ -157,7 +179,7 @@ namespace IKEA.PL.Controllers
             }
 
             ModelState.AddModelError(string.Empty, Message);
-            return View(departmentDto);
+            return View(departmentVM);
         }
 
         #endregion
@@ -166,12 +188,12 @@ namespace IKEA.PL.Controllers
         #region Delete
         [HttpGet]
 
-        public IActionResult Delete(int? Id)
+        public async Task<IActionResult> Delete(int? Id)
         {
             if (Id is null)
                 return BadRequest();
 
-            var Department = departementServices.GetDepartmentById(Id.Value);
+            var Department =await departementServices.GetDepartmentById(Id.Value);
 
             if (Department is null)
                 return NotFound();
@@ -181,12 +203,14 @@ namespace IKEA.PL.Controllers
         }
 
         [HttpPost]
-        public IActionResult Delete (int DeptId)
+        [ValidateAntiForgeryToken]
+
+        public async Task<IActionResult> Delete (int DeptId)
         {
             var message = string.Empty;
             try
             {
-                var IsDeleted=departementServices.DeleteDepartment(DeptId);
+                var IsDeleted=await departementServices.DeleteDepartment(DeptId);
                 if (IsDeleted) 
                     return RedirectToAction(nameof(Index));
 
@@ -204,7 +228,7 @@ namespace IKEA.PL.Controllers
 
             }
             ModelState.AddModelError(string.Empty,message);
-            return RedirectToAction(nameof(Delete),new {Id= DeptId });
+            return RedirectToAction(nameof(Delete),new {Id= DeptId});
         }
 
 

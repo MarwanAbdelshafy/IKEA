@@ -35,6 +35,10 @@ namespace IKEA.BLL.Dto_s.Employees
 
         public int LastModifiedBy { get; set; }
         public DateTime LastModifiedOn { get; set; }
+        public string? departments { get; set; }
+
+        public string? ImageName { get; set; }
+
         #endregion
     }
 }

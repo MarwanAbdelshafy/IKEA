@@ -11,7 +11,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace IKEA.DAL.Persistance.Reposatories.Employee
 {
-    public class EmployeeReposatory :GenericRepository<Employees> ,IEmployeeReposatory
+    public class EmployeeReposatory :GenericRepository<Employeess> ,IEmployeeReposatory
     {
         private readonly ApplcationDBContext _dbContext;
 

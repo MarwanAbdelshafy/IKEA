@@ -8,24 +8,29 @@ using System.Threading.Tasks;
 using IKEA.DAL.Models.Department;
 using Microsoft.EntityFrameworkCore;
 using IKEA.DAL.Models.Employees;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using Microsoft.AspNetCore.Identity;
+using IKEA.DAL.Models.Identity;
 
 namespace IKEA.DAL.Persistance.Data
 {
-    public class ApplcationDBContext : DbContext
+    public class ApplcationDBContext : IdentityDbContext<ApplicationUser>
     {
-        public DbSet<Department> departments { get; set; }
-        public DbSet<Employees> Employees { get; set; }
-
-        protected override void OnModelCreating(ModelBuilder modelBuilder)
-        {
-            modelBuilder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());
-        }
-
-
 
         public ApplcationDBContext(DbContextOptions options) : base(options)
         {
 
         }
+
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            base.OnModelCreating(modelBuilder);
+            modelBuilder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());
+        }
+
+        
+
+        public DbSet<Departmentt> departments { get; set; }
+        public DbSet<Employeess> Employees { get; set; }
     }
 }

@@ -10,14 +10,14 @@ namespace IKEA.BLL.Services.EmployeeServise
 {
     public interface IEmployeeServices
     {
-        IEnumerable<EmployeeDto> GetAllEmployees();
+        Task <IQueryable<EmployeeDto>> GetAllEmployees(string Search);
 
-        EmployeeDetailsDto? GetEmployeeById(int id);
+        Task <EmployeeDetailsDto>? GetEmployeeById(int id);
 
-        int CreateEmployee(CreatedEmployeeDto employeeDto);
+        Task<int> CreateEmployee(CreatedEmployeeDto employeeDto);
 
-        int UpdateDepartment(UpdatedEmployeeDto employeeDto);
+        Task<int> UpdateEmployee(UpdatedEmployeeDto employeeDto);
 
-        bool DeleteEmployee(int id);
+        Task <bool> DeleteEmployee(int id);
     }
 }
